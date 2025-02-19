@@ -34,7 +34,7 @@ public class MainMenu extends ScreenAdapter {
                 new TextureRegionDrawable(new TextureRegion(backgroundTexture));
 
         //title
-        Container<Label> titleLabel = Constants.createLabelWithBackgrounColor("Mr. Brown's Tic Tac Toe",Color.BLACK,  skin);
+        Container<Label> titleLabel = Constants.createLabelWithBackgrounColor("Nam's Tic Tac Toe",Color.BLACK,  skin);
         // Buttons with the skin
         TextButton simulateButton = new TextButton("Simulate Many Games", skin);
         TextButton playButton = new TextButton("Play a Game", skin);

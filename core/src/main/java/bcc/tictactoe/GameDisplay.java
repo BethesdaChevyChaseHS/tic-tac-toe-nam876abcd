@@ -40,9 +40,10 @@ public class GameDisplay extends ScreenAdapter {
 
 
     public GameDisplay(TicTacToe game) {
+        this.game = game;
+        
         //set up the screen you you like
-        
-        
+
         initTableDisplay();
         updateBoardDisplay();
     }

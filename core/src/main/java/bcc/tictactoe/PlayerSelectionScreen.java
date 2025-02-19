@@ -21,19 +21,56 @@ public class PlayerSelectionScreen extends ScreenAdapter{
     private Stage stage;
     private Skin skin;
 
-    public PlayerSelectionScreen(TicTacToe game, int curPlayer) {//checkpoint 1
-       //load skin
+    public PlayerSelectionScreen(TicTacToe game, int curPlayer) {
+        this.game = game;
 
-       //add title saying something like "select player"
-
-       //if you would like a background color behind the title, you can use the helper method in the Constants file
-
-       //check out the documentation linked in the readme / on canvas
-
-       //add buttons to select from the player types listed in constants.java. If there isSimulated is true, don't let human be an option. 
+        stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
     
-       //curplayer will either be 0 or 1
+        skin = new Skin(Gdx.files.internal("skins/glassy/glassy-ui.json"));
+    
+        Container<Label> titleLabel = Constants.createLabelWithBackgrounColor("Select Player", Color.BLACK, skin);
+    
+        TextButton humanButton = new TextButton("Human", skin);
+        TextButton randomAIButton = new TextButton("Random AI", skin);
+        TextButton slightlySmartAIButton = new TextButton("Slightly Smart AI", skin);
+    
+        humanButton.getLabel().setFontScale(0.6f);
+        randomAIButton.getLabel().setFontScale(0.6f);
+        slightlySmartAIButton.getLabel().setFontScale(0.6f);
+    
+        humanButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setPlayer(curPlayer, "Human");
+            }
+        });
+    
+        randomAIButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setPlayer(curPlayer, "RandomAI");
+            }
+        });
+    
+        slightlySmartAIButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setPlayer(curPlayer, "SlightlySmartAI");
+            }
+        });
+    
+        Table table = new Table();
+        table.setFillParent(true);
+        table.center();
+        table.add(titleLabel).pad(10).row();
+        table.add(humanButton).pad(10).row();
+        table.add(randomAIButton).pad(10).row();
+        table.add(slightlySmartAIButton).pad(10).row();
+    
+        stage.addActor(table);
     }
+
 
     @Override
     public void render(float delta) {
