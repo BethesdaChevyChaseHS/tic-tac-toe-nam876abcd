@@ -18,6 +18,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 
 public class GameDisplay extends ScreenAdapter {
     private final TicTacToe game;
@@ -35,18 +36,30 @@ public class GameDisplay extends ScreenAdapter {
     private boolean gameOver = false;
     private Label resultLabel;
     private TextButton playAgainButton;
-
-    
+    private Label turnLabel;
+    private Label player1RecordLabel;
+    private Label player2RecordLabel;
+    private Board board;
 
 
     public GameDisplay(TicTacToe game) {
         this.game = game;
-        
-        //set up the screen you you like
+        stage = new Stage();
+        skin = new Skin(Gdx.files.internal("skins/glassy/glassy-ui.json"));
+        Gdx.input.setInputProcessor(stage);
+        board = new Board();
+        game.setBoardState(board);
 
-        initTableDisplay();
-        updateBoardDisplay();
+        turnLabel = new Label("Player 1's Turn", skin);
+        player1RecordLabel = new Label("Player 1 Record: 0W - 0L - 0T", skin);
+        player2RecordLabel = new Label("Player 2 Record: 0W - 0L - 0T", skin);
+    
+        // Proceed to initialize the game elements like the board
+        initTableDisplay();  // This will display the Tic-Tac-Toe grid
+        updateBoardDisplay(); // Update the grid with the initial state
+        //set up the screen you you like
     }
+
 
     public void initTableDisplay() {// initializes tic tac toe board - no changes needed 
         boardTable = new Table();
@@ -86,29 +99,91 @@ public class GameDisplay extends ScreenAdapter {
     public void handleBoardClick(int row, int col) {
         //checkpoint 2
         //this position was clicked, play the move, then call handle move made
+        if (!gameOver) {
+            // Get current player's mark
+            Mark currentMark = game.getCurPlayerMark();
+
+            // Make move
+            boolean moveMade = game.getBoardState().makeMove(row, col, currentMark);
+
+            if (moveMade) {
+                handleMoveMade();
+            }
+            updateBoardDisplay();
+        }
     }
 
     public void handleMoveMade(){//checkpoint 2
         //call updateBoardDisplay
         //check for a win or tie. If there is one, call showResult() with a message containing the winner, and update the player stats. 
-       
+        Mark winner = game.getBoardState().checkWin();
+        Mark currentPlayerMark = game.getCurPlayerMark();
+        if (board.checkWin() == Mark.X) {
+            showResult("Player " + currentPlayerMark + " Wins!");
+        } 
+        else if (board.isFull()) {
+            showResult("It's a Tie!");
+        } else {
+            game.nextPlayer(); // Switch to the next player
+            updateTurnLabel(); // Update whose turn it is
+    
+        }
 
         //checkpoint 3 modification
         //if game is simulated, instead of having a popup by calling showresult, start the next game if we have not run all the simulations
         
     }
 
+    private void updateTurnLabel() {
+        // Update whose turn it is
+        if (game.getCurPlayer() == 0) {
+            turnLabel.setText("Player 1's Turn");
+        } else {
+            turnLabel.setText("Player 2's Turn");
+        }
+    }    
+
     private void showResult(String result) {
         // Create an overlay to show the result. Include a button to play again. 
 
         // when the button is clicked, it should dissappear - you can do this using the .remove() command. 
-        
+            // Create a Label or a dialog to display the result, with the message passed in as a parameter.
+    resultLabel = new Label(result, skin);
+    resultLabel.setFontScale(3f);  // Make the text larger for visibility
+    resultLabel.setColor(Color.WHITE);  // Change the color to white (or any other color)
+    resultLabel.setPosition(BOARD_X + BOARD_WIDTH / 2 - resultLabel.getWidth() / 2, BOARD_Y + BOARD_HEIGHT + 20);  // Center the label below the board
+
+    // Add resultLabel to the stage
+    stage.addActor(resultLabel);
+
+    // Show the "Play Again" button after the result is displayed
+    playAgainButton = new TextButton("Play Again", skin);
+    playAgainButton.setPosition(BOARD_X + BOARD_WIDTH / 2 - playAgainButton.getWidth() / 2, BOARD_Y + BOARD_HEIGHT + 60);  // Center the button below the result label
+    playAgainButton.addListener(new ClickListener() {
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            // Reset the game and remove the result and button
+            resetGame();
+            resultLabel.remove();  // Remove the result label
+            playAgainButton.remove();  // Remove the play again button
+        }
+    });
+
+    // Add playAgainButton to the stage
+    stage.addActor(playAgainButton);
     }
+
     public void resetGame() {
         //update board state, current player, etc. 
+        game.getBoardState().reset();
+        game.resetCurPlayer();
+        gameOver = false;
+        updateBoardDisplay();
+        stage.clear(); // Remove the result and play-again button
     }
 
     public void updateBoardDisplay() {//updates the board, you should call this if a move is made. No need to change. 
+       System.out.println("Updating board display");
         boardTable.clearChildren();
         Mark[][] grid = game.getBoardState().getGrid();
         for (int row = 0; row < 3; row++) {
@@ -124,6 +199,8 @@ public class GameDisplay extends ScreenAdapter {
                 cellLabel.setAlignment(Align.center);     // Center text within the label.
                 cellLabel.setFontScale(5f); 
                 boardTable.add(cellLabel).width(BOARD_WIDTH / 3).height(BOARD_HEIGHT / 3);
+                player1RecordLabel.setText("Player 1 Record: " + game.getPlayer1().getRecord());
+                player2RecordLabel.setText("Player 2 Record: " + game.getPlayer2().getRecord());
             }
             boardTable.row();
         }

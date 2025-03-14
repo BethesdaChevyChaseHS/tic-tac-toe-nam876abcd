@@ -21,10 +21,21 @@ public class TicTacToe extends Game {
     private int numberOfRounds;
     private boolean isSimulated;
     private int round = 0;
+    private GameDisplay gameDisplay;
+
 
     @Override
     public void create() {
         setScreen(new MainMenu(this));
+    }
+
+    public void startGame(Player player1, Player player2) {
+        this.player1 = player1;
+        this.player2 = player2;
+        
+        // Create and switch to the game screen
+        this.gameDisplay = new GameDisplay(this);
+        this.setScreen(gameDisplay);  // Switch to GameDisplay
     }
 
     @Override
@@ -52,7 +63,6 @@ public class TicTacToe extends Game {
                 player2 = new SlightlySmartAI();
             }
         }
-        setScreen(new GameDisplay(this));
     }
 
     public void setSimulated(boolean isSimulated) {
@@ -60,7 +70,7 @@ public class TicTacToe extends Game {
     }
 
     public void startPlayerSelection() {
-        setScreen(new PlayerSelectionScreen(this, 0));
+        setScreen(new PlayerSelectionScreen(this, 0, "Select Player 1"));
     }
 
     public void setNumberOfRounds(int numberOfRounds) {
@@ -129,4 +139,6 @@ public class TicTacToe extends Game {
     public void incrementRound() {
         round++;
     }
+
+
 }

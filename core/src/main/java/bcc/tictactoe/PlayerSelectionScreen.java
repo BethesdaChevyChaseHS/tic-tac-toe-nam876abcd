@@ -20,16 +20,20 @@ public class PlayerSelectionScreen extends ScreenAdapter{
     private final TicTacToe game;
     private Stage stage;
     private Skin skin;
+    private String titleText;
+    private int curPlayer;
 
-    public PlayerSelectionScreen(TicTacToe game, int curPlayer) {
+    public PlayerSelectionScreen(TicTacToe game, int curPlayer, String titleText) {
         this.game = game;
+        this.curPlayer = curPlayer;
+        this.titleText = titleText;
 
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
     
         skin = new Skin(Gdx.files.internal("skins/glassy/glassy-ui.json"));
     
-        Container<Label> titleLabel = Constants.createLabelWithBackgrounColor("Select Player", Color.BLACK, skin);
+        Container<Label> titleLabel = Constants.createLabelWithBackgrounColor(titleText, Color.BLACK, skin);
     
         TextButton humanButton = new TextButton("Human", skin);
         TextButton randomAIButton = new TextButton("Random AI", skin);
@@ -43,6 +47,12 @@ public class PlayerSelectionScreen extends ScreenAdapter{
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setPlayer(curPlayer, "Human");
+                if (curPlayer == 0) {
+                    game.setScreen(new PlayerSelectionScreen(game, 1, "Select Player 2"));
+                } else {
+                    game.setScreen(new GameDisplay(game));
+                    
+                }
             }
         });
     
@@ -50,6 +60,11 @@ public class PlayerSelectionScreen extends ScreenAdapter{
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setPlayer(curPlayer, "RandomAI");
+                if (curPlayer == 0) {
+                    game.setScreen(new PlayerSelectionScreen(game, 1, "Select Player 2"));
+                } else {
+                    game.setScreen(new GameDisplay(game));  // Both players selected, go to the game screen
+                }
             }
         });
     
@@ -57,6 +72,11 @@ public class PlayerSelectionScreen extends ScreenAdapter{
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setPlayer(curPlayer, "SlightlySmartAI");
+                if (curPlayer == 0) {
+                    game.setScreen(new PlayerSelectionScreen(game, 1, "Select Player 2"));
+                } else {
+                    game.setScreen(new GameDisplay(game));  // Both players selected, go to the game screen
+                }
             }
         });
     
@@ -70,6 +90,7 @@ public class PlayerSelectionScreen extends ScreenAdapter{
     
         stage.addActor(table);
     }
+
 
 
     @Override
