@@ -50,7 +50,7 @@ public class GameDisplay extends ScreenAdapter {
         board = new Board();
         game.setBoardState(board);
 
-        turnLabel = new Label("Player 1's Turn", skin);
+        turnLabel = new Label("Current player: " + game.getCurPlayerMark(), skin);
         player1RecordLabel = new Label("Player 1 Record: 0W - 0L - 0T", skin);
         player2RecordLabel = new Label("Player 2 Record: 0W - 0L - 0T", skin);
     
@@ -149,16 +149,16 @@ public class GameDisplay extends ScreenAdapter {
         // when the button is clicked, it should dissappear - you can do this using the .remove() command. 
             // Create a Label or a dialog to display the result, with the message passed in as a parameter.
     resultLabel = new Label(result, skin);
-    resultLabel.setFontScale(3f);  // Make the text larger for visibility
-    resultLabel.setColor(Color.WHITE);  // Change the color to white (or any other color)
-    resultLabel.setPosition(BOARD_X + BOARD_WIDTH / 2 - resultLabel.getWidth() / 2, BOARD_Y + BOARD_HEIGHT + 20);  // Center the label below the board
+    resultLabel.setFontScale(1.5f);  // Make the text larger for visibility
+    resultLabel.setColor(Color.RED);  // Change the color to white (or any other color)
+    resultLabel.setPosition(BOARD_X + BOARD_WIDTH / 3 - resultLabel.getWidth() / 2, BOARD_Y + BOARD_HEIGHT + 20);  // Center the label below the board
 
     // Add resultLabel to the stage
     stage.addActor(resultLabel);
 
     // Show the "Play Again" button after the result is displayed
     playAgainButton = new TextButton("Play Again", skin);
-    playAgainButton.setPosition(BOARD_X + BOARD_WIDTH / 2 - playAgainButton.getWidth() / 2, BOARD_Y + BOARD_HEIGHT + 60);  // Center the button below the result label
+    playAgainButton.setPosition(BOARD_X + BOARD_WIDTH / 2 - playAgainButton.getWidth() / 2, BOARD_Y + 80);  // Center the button below the result label
     playAgainButton.addListener(new ClickListener() {
         @Override
         public void clicked(InputEvent event, float x, float y) {
@@ -183,7 +183,6 @@ public class GameDisplay extends ScreenAdapter {
     }
 
     public void updateBoardDisplay() {//updates the board, you should call this if a move is made. No need to change. 
-       System.out.println("Updating board display");
         boardTable.clearChildren();
         Mark[][] grid = game.getBoardState().getGrid();
         for (int row = 0; row < 3; row++) {
