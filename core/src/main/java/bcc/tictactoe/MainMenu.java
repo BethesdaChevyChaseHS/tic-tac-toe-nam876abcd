@@ -65,7 +65,6 @@ public class MainMenu extends ScreenAdapter {
         table.add(playButton).pad(10).row();
         table.add(simulateButton).pad(10).row();
         table.setBackground(backgroundDrawable);
-
         stage.addActor(table);
     }
 

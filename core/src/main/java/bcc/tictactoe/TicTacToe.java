@@ -20,48 +20,50 @@ public class TicTacToe extends Game {
     private int curPlayer = 0;
     private int numberOfRounds;
     private boolean isSimulated;
-    private int round = 0;
-    private GameDisplay gameDisplay;
-
+    private int round = 1;
 
     @Override
     public void create() {
         setScreen(new MainMenu(this));
     }
 
-    public void startGame(Player player1, Player player2) {
-        this.player1 = player1;
-        this.player2 = player2;
-        
-        // Create and switch to the game screen
-        this.gameDisplay = new GameDisplay(this);
-        this.setScreen(gameDisplay);  // Switch to GameDisplay
-    }
-
     @Override
-    public void dispose() {
-
-    }
+    public void dispose() {}
 
     public void setPlayer(int curPlayer, String option) {
-        //checkpoint 1 - set player, then determine what screen to go to next with setScreen(new ______)
-        //NOTE - the only player types that you have programmed so gr are Human and RandomAI
-        if (curPlayer == 0) {
-            if (option.equals("Human")) {
+        if (option.equalsIgnoreCase("Human")) {
+            if (curPlayer == 0) {
                 player1 = new Human();
-            } else if (option.equals("RandomAI")) {
-                player1 = new RandomAI();
-            } else if (option.equals("SlightlySmartAI")) {
-                player1 = new SlightlySmartAI();
-            }
-        } else {
-            if (option.equals("Human")) {
+            } else {
                 player2 = new Human();
-            } else if (option.equals("RandomAI")) {
-                player2 = new RandomAI();
-            } else if (option.equals("SlightlySmartAI")) {
-                player2 = new SlightlySmartAI();
             }
+        } else if (option.equalsIgnoreCase("Random AI")) {
+            if (curPlayer == 0) {
+                player1 = new RandomAI();
+            } else {
+                player2 = new RandomAI();
+            }
+         } else if (option.equalsIgnoreCase("Slightly Smart AI")) {
+                if (curPlayer == 0) {
+                    player1 = new SlightlySmartAI();
+                } else {
+                    player2 = new SlightlySmartAI();
+                }
+            }
+            else if(option.equalsIgnoreCase("Smart AI")){
+                if (curPlayer == 0) {
+                    player1 = new SmartAI();
+                } else {
+                    player2 = new SmartAI();
+                }
+            
+        }
+    
+        if (curPlayer == 0) {
+            setScreen(new PlayerSelectionScreen(this, 1));
+        } else {
+            boardState = new Board();
+            setScreen(new GameDisplay(this));
         }
     }
 
@@ -70,7 +72,7 @@ public class TicTacToe extends Game {
     }
 
     public void startPlayerSelection() {
-        setScreen(new PlayerSelectionScreen(this, 0, "Select Player 1"));
+        setScreen(new PlayerSelectionScreen(this, 0));
     }
 
     public void setNumberOfRounds(int numberOfRounds) {
@@ -101,24 +103,26 @@ public class TicTacToe extends Game {
         return curPlayer;
     }
 
-    public void setCurPlayer(int curPlayer) {
-        this.curPlayer = curPlayer;
+    public void setCurPlayer(Mark mark) {
+        this.curPlayer = (mark == Mark.X) ? 0 : 1; 
     }
 
-    public Player getCurPlayerObj() {
-        if(curPlayer == 0) {
+    public Player getCurPlayerObj(){
+
+        if(curPlayer == 0){
             return player1;
-        } else {
+        }
+        else{
             return player2;
         }
+    } 
+
+    public Player getCurrentPlayer() {  
+        return (curPlayer == 0) ? player1 : player2;
     }
 
     public Mark getCurPlayerMark() {
-        if(curPlayer == 0) {
-            return Mark.X;
-        } else {
-            return Mark.O;
-        }
+        return (curPlayer == 0) ? Mark.X : Mark.O;
     }
 
     public int getNumberOfRounds() {
@@ -136,9 +140,8 @@ public class TicTacToe extends Game {
     public int getRound() {
         return round;
     }
+
     public void incrementRound() {
         round++;
     }
-
-
 }
